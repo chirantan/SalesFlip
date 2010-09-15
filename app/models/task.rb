@@ -5,13 +5,15 @@ class Task
   include HasConstant::Orm::Mongoid
   include Permission
   include Mongoid::Rails::MultiParameterAttributes
+  include GoogleCalendarSync
 
   field :name
-  field :due_at,          :type => Time
-  field :category,        :type => Integer
-  field :priority,        :type => Integer
-  field :completed_at,    :type => Time
-  field :deleted_at,      :type => Time
+  field :due_at,                        :type => Time
+  field :category,                      :type => Integer
+  field :priority,                      :type => Integer
+  field :completed_at,                  :type => Time
+  field :deleted_at,                    :type => Time
+  field :google_calendar_event_id,      :type => String
 
   has_constant :categories, lambda { I18n.t(:task_categories) }
 

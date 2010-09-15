@@ -41,6 +41,16 @@ Freelancer.blueprint(:carsten_werner) do
   email { 'carsten.werner@1000jobboersen.de' }
 end
 
+GoogleAccount.blueprint do
+  email
+  password
+end
+
+GoogleAccount.blueprint(:dummy) do
+  email { 'free.flying.hippo@gmail.com' }
+  password { 'create!23' }
+end
+
 User.blueprint do
   company { Company.make }
   email
@@ -60,6 +70,14 @@ User.blueprint(:benny) do
   email { 'benjamin.pochhammer@1000jobboersen.de' }
   password { 'password' }
   password_confirmation { 'password' }
+end
+
+User.blueprint(:calendar_user) do
+  company { Company.make }
+  email { 'free.flying.hippo@gmail.com' }
+  password { 'password' }
+  password_confirmation { 'password' }
+  google_account { GoogleAccount.make(:dummy) }
 end
 
 Admin.blueprint do
@@ -121,6 +139,13 @@ Task.blueprint(:call_erich) do
   category { 'Call' }
   asset { Lead.make(:erich) }
   due_at { 'due_today' }
+end
+
+Task.blueprint(:google_calendar) do
+  user { User.make(:calendar_user) }
+  name { Sham.sentence }
+  category { 'Call' }
+  due_at { Time.now }
 end
 
 Account.blueprint do
@@ -220,3 +245,4 @@ Search.blueprint do
   user { User.make(:annika) }
   terms { Sham.name }
 end
+

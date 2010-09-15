@@ -9,7 +9,7 @@ class User
 
   field :username
   field :api_key
-
+  
   attr_accessor :company_name
 
   has_many_related  :leads
@@ -21,6 +21,7 @@ class User
   has_many_related  :searches
   has_many_related  :invitations, :as => :inviter, :dependent => :destroy
   has_one_related   :invitation, :as => :invited
+  has_one_related   :google_account, :dependent => :destroy
 
   belongs_to_related :company
 

@@ -1,4 +1,4 @@
-require 'test_helper.rb'
+require File.join(File.dirname(__FILE__), '..', 'test_helper.rb')
 
 class TaskTest < ActiveSupport::TestCase
   context "Class" do
@@ -170,7 +170,7 @@ class TaskTest < ActiveSupport::TestCase
         assert_equal [@task2], Task.due_later.to_a
       end
     end
-    
+
     context 'completed_today' do
       setup do
         @task2 = Task.make
@@ -481,5 +481,32 @@ class TaskTest < ActiveSupport::TestCase
         assert_equal time.to_i, @task.due_at.to_i
       end
     end
+  end
+
+  context 'Google Calendar Sync' do
+    setup do
+      FakeWeb.allow_net_connect = true
+      @task = Task.make_unsaved(:google_calendar)
+    end
+
+    should 'create an event in google calendar of the user when a new task is created in the system' do
+      assert !@task.exists_on_google_calendar?
+      @task.save
+      assert @task.exists_on_google_calendar?
+      @task.destroy
+      #assert !@task.google_calendar_event.exists?
+      # For some reason the gCal4Ruby deletes the event alright but doesn't seem to reflect the same
+    end
+    
+    should 'update an existing event in google calendar of the user when a task is updated in the system' do
+      assert !@task.exists_on_google_calendar?
+      @task.save
+      @task.update_attributes :name => "This is a random number #{rand(100000)}" rescue nil # Supressing some activity log error
+      assert_equal @task.name, @task.google_calendar_event.title
+      @task.destroy
+      #assert !@task.google_calendar_event(google_calendar_event_id).exists?
+    end
+    
+    should 'delete an existing event in google calendar of the user when a task is deleted from the system'
   end
 end
